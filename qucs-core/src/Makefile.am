@@ -62,7 +62,7 @@ noinst_TEMPLATES = tmatrix.cpp eqnsys.cpp nasolver.cpp states.cpp tvector.cpp \
 noinst_HEADERS = $(noinst_TEMPLATES) check_netlist.h input.h net.h            \
 	tokens_netlist.h dataset.h logging.h node.h property.h vector.h       \
 	tokens_dataset.h check_dataset.h strlist.h tokens_touchstone.h        \
-	check_touchstone.h matrix.h analysis.h spsolver.h dcsolver.h object.h \
+	check_touchstone.h analysis.h spsolver.h dcsolver.h object.h \
 	nodelist.h variable.h environment.h parasweep.h eqnsys.h sweep.h      \
 	operatingpoint.h libqucsator.h equation.h evaluate.h exception.h      \
 	exceptionstack.h matvec.h constants.h consts.h nasolver.h tmatrix.h   \
@@ -78,7 +78,7 @@ libqucsator_a_SOURCES = dataset.cpp check_dataset.cpp parse_dataset.cpp      \
 	scan_dataset.cpp check_touchstone.cpp vector.cpp object.cpp          \
 	property.cpp parse_touchstone.cpp scan_touchstone.cpp variable.cpp   \
 	strlist.cpp logging.c exception.cpp exceptionstack.cpp               \
-	matvec.cpp matrix.cpp parse_citi.cpp                                 \
+	matvec.cpp parse_citi.cpp                                            \
 	scan_citi.cpp check_citi.cpp parse_zvr.cpp scan_zvr.cpp sweep.cpp    \
 	check_zvr.cpp parse_mdl.cpp scan_mdl.cpp check_mdl.cpp check_csv.cpp \
 	parse_csv.cpp scan_csv.cpp
