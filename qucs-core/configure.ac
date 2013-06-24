@@ -252,6 +252,9 @@ AC_CHECK_FUNCS([floor pow exp sqrt log10 log cos sin acos asin tan atan sinh \
 		cosh tanh fabs modf atan2 jn yn erf erfc round trunc acosh \
 		asinh strdup strerror strchr])
 
+# check for package
+PKG_CHECK_MODULES([EIGEN3],[eigen3])
+
 dnl Checks for complex classes and functions.
 AC_CXX_NAMESPACES
 AC_CXX_HAVE_COMPLEX

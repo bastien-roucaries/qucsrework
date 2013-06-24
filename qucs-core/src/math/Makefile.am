@@ -22,7 +22,7 @@
 # Boston, MA 02110-1301, USA.  
 #
 
-INCLUDES = -I$(top_srcdir)/src
+AM_CPPFLAGS = $(EIGEN3_CFLAGS) -I$(top_srcdir)/src
 
 noinst_HEADERS = complex.h fspecial.h real.h precision.h matrix.h
 noinst_LIBRARIES = libqucsmath.a

@@ -25,6 +25,8 @@
 #ifndef __MATRIX_H__
 #define __MATRIX_H__
 
+#include <Eigen/Dense>
+
 class vector;
 class matrix;
 
@@ -150,6 +152,7 @@ class matrix
   int rows;
   /*! Matrix data */
   nr_complex_t * data;
+  Eigen::Matrix<nr_complex_t, Eigen::Dynamic, Eigen::Dynamic> m;
 };
 
 #endif /* __MATRIX_H__ */

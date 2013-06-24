@@ -37,7 +37,7 @@ endif
 
 bin_PROGRAMS = qucsator
 
-INCLUDES = -I$(top_srcdir)/src/math -I$(top_srcdir)/src/components
+AM_CPPFLAGS = $(EIGEN3_CFLAGS) -I$(top_srcdir)/src/math -I$(top_srcdir)/src/components
 
 qucsator_LDADD = libqucsator.a		      \
 	math/libqucsmath.a	              \

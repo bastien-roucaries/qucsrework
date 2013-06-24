@@ -24,7 +24,7 @@
 
 # the m-interface library rules
 
-INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/src/math -I$(top_srcdir)/src/components
+AM_CPPFLAGS = $(EIGEN3_CFLAGS) -I$(top_srcdir)/src -I$(top_srcdir)/src/math -I$(top_srcdir)/src/components
 
 noinst_HEADERS = m_interface.h m_trsolver.h
 
