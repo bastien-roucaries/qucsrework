@@ -95,543 +95,50 @@
 #include "vector.h"
 #include "matrix.h"
 
-/*!\brief Create an empty matrix
 
-   Constructor creates an unnamed instance of the matrix class.
-*/
-matrix::matrix () {
-  rows = 0;
-  cols = 0;
-  data = NULL;
-}
-
-/*!\brief Creates a square matrix
-
-    Constructor creates an unnamed instance of the matrix class with a
-    certain number of rows and columns.  Particularly creates a square matrix.  
-    \param[in] s number of rows or colums of square matrix
-    \todo Why not s const?
-*/
-matrix::matrix (int s)  {
-  rows = cols = s;
-  data = (s > 0) ? new nr_complex_t[s * s] : NULL;
-}
-
-/* \brief Creates a matrix
-
-   Constructor creates an unnamed instance of the matrix class with a
-   certain number of rows and columns.  
-   \param[in] r number of rows
-   \param[in] c number of column
-   \todo Why not r and c constant
-   \todo Assert r >= 0 and c >= 0
-*/
-matrix::matrix (int r, int c)  {
-  rows = r;
-  cols = c;
-  data = (r > 0 && c > 0) ? new nr_complex_t[r * c] : NULL;
-}
-
-/* \brief copy constructor
-
-   The copy constructor creates a new instance based on the given
-   matrix object. 
-   \todo Add assert tests
-*/
-matrix::matrix (const matrix & m) {
-  rows = m.rows;
-  cols = m.cols;
-  data = NULL;
-
-  // copy matrix elements
-  if (rows > 0 && cols > 0) {
-    data = new nr_complex_t[rows * cols];
-    memcpy (data, m.data, sizeof (nr_complex_t) * rows * cols);
-  }
-}
-
-/*!\brief Assignment operator
-    
-  The assignment copy constructor creates a new instance based on the
-  given matrix object. 
-  
-  \param[in] m object to copy
-  \return assigned object
-  \note m = m is safe
-*/
-const matrix& matrix::operator=(const matrix & m) {
-  if (&m != this) {
-    rows = m.rows;
-    cols = m.cols;
-    if (data) { 
-      delete[] data; 
-      data = NULL; 
-    }
-    if (rows > 0 && cols > 0) {
-      data = new nr_complex_t[rows * cols];
-      memcpy (data, m.data, sizeof (nr_complex_t) * rows * cols);
-    }
-  }
-  return *this;
-}
-
-/*!\bried Destructor
-  
-   Destructor deletes a matrix object.
-*/
-matrix::~matrix () {
-  if (data) delete[] data;
-}
-
-/*!\brief  Returns the matrix element at the given row and column.
-   \param[in] r row number
-   \param[in] c column number
-   \todo Why not inline and synonymous of ()
-   \todo c and r const
-*/
-nr_complex_t matrix::get (int r, int c) {
-  return data[r * cols + c];
-}
-
-/*!\brief Sets the matrix element at the given row and column.
-   \param[in] r row number
-   \param[in] c column number
-   \param[in] z complex number to assign
-   \todo Why not inline and synonymous of ()
-   \todo r c and z const
-*/
-void matrix::set (int r, int c, nr_complex_t z) {
-  data[r * cols + c] = z;
-}
 
 #ifdef DEBUG
 /*!\brief Debug function: Prints the matrix object */
 void matrix::print (void) {
-  for (int r = 0; r < rows; r++) {
-    for (int c = 0; c < cols; c++) {
+  for (int r = 0; r < this->m.rows(); r++) {
+    for (int c = 0; c < this->m.cols(); c++) {
       fprintf (stderr, "%+.2e,%+.2e ", (double) real (get (r, c)),
       	       (double) imag (get (r, c)));
     }
     fprintf (stderr, "\n");
   }
 }
+#else 
+/* will be non existant and give a linking error */
 #endif /* DEBUG */
-
-/*!\brief Matrix addition.
-   \param[a] first matrix
-   \param[b] second matrix
-   \note assert same size
-   \todo a and b are const
-*/
-matrix operator + (matrix a, matrix b) {
-  assert (a.getRows () == b.getRows () && a.getCols () == b.getCols ());
-
-  matrix res (a.getRows (), a.getCols ());
-  for (int r = 0; r < a.getRows (); r++)
-    for (int c = 0; c < a.getCols (); c++)
-      res.set (r, c, a.get (r, c) + b.get (r, c));
-  return res;
-}
-
-/*!\brief Intrinsic matrix addition.
-   \param[in] a matrix to add
-   \note assert same size
-   \todo a is const
-*/
-matrix matrix::operator += (matrix a) {
-  assert (a.getRows () == rows && a.getCols () == cols);
-
-  int r, c, i;
-  for (i = 0, r = 0; r < a.getRows (); r++)
-    for (c = 0; c < a.getCols (); c++, i++)
-      data[i] += a.get (r, c);
-  return *this;
-}
-
-/*!\brief Matrix subtraction.
-   \param[a] first matrix
-   \param[b] second matrix
-   \note assert same size
-   \todo a and b are const
-*/
-matrix operator - (matrix a, matrix b) {
-  assert (a.getRows () == b.getRows () && a.getCols () == b.getCols ());
-
-  matrix res (a.getRows (), a.getCols ());
-  for (int r = 0; r < a.getRows (); r++)
-    for (int c = 0; c < a.getCols (); c++)
-      res.set (r, c, a.get (r, c) - b.get (r, c));
-  return res;
-}
-
-/*!\brief Unary minus. */
-matrix matrix::operator - () {
-  matrix res (getRows (), getCols ());
-  int r, c, i;
-  for (i = 0, r = 0; r < getRows (); r++)
-    for (c = 0; c < getCols (); c++, i++)
-      res.set (r, c, -data[i]);
-  return res;
-}
-
-/*!\brief Intrinsic matrix subtraction.
-   \param[in] a matrix to substract
-   \note assert same size
-*/
-matrix matrix::operator -= (matrix a) {
-  assert (a.getRows () == rows && a.getCols () == cols);
-  int r, c, i;
-  for (i = 0, r = 0; r < a.getRows (); r++)
-    for (c = 0; c < a.getCols (); c++, i++)
-      data[i] -= a.get (r, c);
-  return *this;
-}
-
-/*!\brief Matrix scaling complex version
-   \param[in] a matrix to scale
-   \param[in] z scaling complex
-   \return Scaled matrix
-   \todo Why not a and z const
-*/
-matrix operator * (matrix a, nr_complex_t z) {
-  matrix res (a.getRows (), a.getCols ());
-  for (int r = 0; r < a.getRows (); r++)
-    for (int c = 0; c < a.getCols (); c++)
-      res.set (r, c, a.get (r, c) * z);
-  return res;
-}
-
-/*!\brief Matrix scaling complex version (different order)
-   \param[in] a matrix to scale
-   \param[in] z scaling complex
-   \return Scaled matrix
-   \todo Why not a and z const
-   \todo Why not inline
-*/
-matrix operator * (nr_complex_t z, matrix a) {
-  return a * z;
-}
-
-/*!\brief Matrix scaling complex version
-   \param[in] a matrix to scale
-   \param[in] d scaling real
-   \return Scaled matrix
-   \todo Why not d and a const
-*/
-matrix operator * (matrix a, nr_double_t d) {
-  matrix res (a.getRows (), a.getCols ());
-  for (int r = 0; r < a.getRows (); r++)
-    for (int c = 0; c < a.getCols (); c++)
-      res.set (r, c, a.get (r, c) * d);
-  return res;
-}
-
-/*!\brief Matrix scaling real version (different order)
-   \param[in] a matrix to scale
-   \param[in] d scaling real
-   \return Scaled matrix
-   \todo Why not inline?
-   \todo Why not d and a const
-*/
-matrix operator * (nr_double_t d, matrix a) {
-  return a * d;
-}
-
-/*!\brief Matrix scaling division by complex version
-   \param[in] a matrix to scale
-   \param[in] z scaling complex
-   \return Scaled matrix
-   \todo Why not a and z const
-*/
-matrix operator / (matrix a, nr_complex_t z) {
-  matrix res (a.getRows (), a.getCols ());
-  for (int r = 0; r < a.getRows (); r++)
-    for (int c = 0; c < a.getCols (); c++)
-      res.set (r, c, a.get (r, c) / z);
-  return res;
-}
-
-/*!\brief Matrix scaling division by real version
-   \param[in] a matrix to scale
-   \param[in] d scaling real
-   \return Scaled matrix
-   \todo Why not a and d const
-*/
-matrix operator / (matrix a, nr_double_t d) {
-  matrix res (a.getRows (), a.getCols ());
-  for (int r = 0; r < a.getRows (); r++)
-    for (int c = 0; c < a.getCols (); c++)
-      res.set (r, c, a.get (r, c) / d);
-  return res;
-}
-
-/*! Matrix multiplication.
-  
-    Dumb and not optimized matrix multiplication
-    \param[a] first matrix
-    \param[b] second matrix
-    \note assert compatibility
-    \todo a and b are const
-*/
-matrix operator * (matrix a, matrix b) {
-  assert (a.getCols () == b.getRows ());
-
-  int r, c, i, n = a.getCols ();
-  nr_complex_t z;
-  matrix res (a.getRows (), b.getCols ());
-  for (r = 0; r < a.getRows (); r++) {
-    for (c = 0; c < b.getCols (); c++) {
-      for (i = 0, z = 0; i < n; i++) z += a.get (r, i) * b.get (i, c);
-      res.set (r, c, z);
-    }
-  }
-  return res;
-}
-
-/*!\brief Complex scalar addition.
-   \param[in] a matrix 
-   \param[in] z complex to add
-   \todo Move near other +
-   \todo a and z are const
-*/
-matrix operator + (matrix a, nr_complex_t z) {
-  matrix res (a.getRows (), a.getCols ());
-  for (int r = 0; r < a.getRows (); r++)
-    for (int c = 0; c < a.getCols (); c++)
-      res.set (r, c, a.get (r, c) + z);
-  return res;
-}
-
-/*!\brief Complex scalar addition different order.
-   \param[in] a matrix 
-   \param[in] z complex to add
-   \todo Move near other +
-   \todo a and z are const
-   \todo Why not inline
-*/
-matrix operator + (nr_complex_t z, matrix a) {
-  return a + z;
-}
-
-/*!\brief Real scalar addition.
-   \param[in] a matrix 
-   \param[in] d real to add
-   \todo Move near other +
-   \todo a and d are const
-*/
-matrix operator + (matrix a, nr_double_t d) {
-  matrix res (a.getRows (), a.getCols ());
-  for (int r = 0; r < a.getRows (); r++)
-    for (int c = 0; c < a.getCols (); c++)
-      res.set (r, c, a.get (r, c) + d);
-  return res;
-}
-
-/*!\brief Real scalar addition different order.
-   \param[in] a matrix 
-   \param[in] d real to add
-   \todo Move near other +
-   \todo a and d are const
-   \todo Why not inline
-*/
-matrix operator + (nr_double_t d, matrix a) {
-  return a + d;
-}
-
-/*!\brief Complex scalar substraction
-   \param[in] a matrix 
-   \param[in] z complex to add
-   \todo Move near other +
-   \todo a and z are const
-   \todo Why not inline
-*/
-matrix operator - (matrix a, nr_complex_t z) {
-  return -z + a;
-}
-
-/*!\brief Complex scalar substraction different order
-   \param[in] a matrix 
-   \param[in] z complex to add
-   \todo Move near other +
-   \todo a and z are const
-   \todo Why not inline
-*/
-matrix operator - (nr_complex_t z, matrix a) {
-  return -a + z;
-}
-
-/*!\brief Real scalar substraction
-   \param[in] a matrix 
-   \param[in] z real to add
-   \todo Move near other +
-   \todo a and z are const
-   \todo Why not inline
-*/
-matrix operator - (matrix a, nr_double_t d) {
-  return -d + a;
-}
-
-/*!\brief Real scalar substraction different order
-   \param[in] a matrix 
-   \param[in] z real to add
-   \todo Move near other +
-   \todo a and z are const
-   \todo Why not inline
-*/
-matrix operator - (nr_double_t d, matrix a) {
-  return -a + d;
-}
-
-/*!\brief Matrix transposition
-   \param[in] a Matrix to transpose
-   \todo add transpose in place
-   \todo a is const
-*/
-matrix transpose (matrix a) {
-  matrix res (a.getCols (), a.getRows ());
-  for (int r = 0; r < a.getRows (); r++)
-    for (int c = 0; c < a.getCols (); c++)
-      res.set (c, r, a.get (r, c));
-  return res;
-}
-
-/*!\brief Conjugate complex matrix.
-  \param[in] a Matrix to conjugate
-  \todo add conj in place
-  \todo a is const
-*/
-matrix conj (matrix a) {
-  matrix res (a.getRows (), a.getCols ());
-  for (int r = 0; r < a.getRows (); r++)
-    for (int c = 0; c < a.getCols (); c++)
-      res.set (r, c, conj (a.get (r, c)));
-  return res;
-}
-
-/*!\brief adjoint matrix
-   
-   The function returns the adjoint complex matrix.  This is also
-   called the adjugate or transpose conjugate. 
-   \param[in] a Matrix to transpose
-   \todo add adjoint in place
-   \todo Do not lazy and avoid conj and transpose copy
-   \todo a is const
-*/
-matrix adjoint (matrix a) {
-  return transpose (conj (a));
-}
-
-/*!\brief Computes magnitude of each matrix element.
-   \param[in] a matrix
-   \todo add abs in place
-   \todo a is const
-*/
-matrix abs (matrix a) {
-  matrix res (a.getRows (), a.getCols ());
-  for (int r = 0; r < a.getRows (); r++)
-    for (int c = 0; c < a.getCols (); c++)
-      res.set (r, c, abs (a.get (r, c)));
-  return res;
-}
-
-/*!\brief Computes magnitude in dB of each matrix element.
-   \param[in] a matrix
-*/
-matrix dB (matrix a) {
-  matrix res (a.getRows (), a.getCols ());
-  for (int r = 0; r < a.getRows (); r++)
-    for (int c = 0; c < a.getCols (); c++)
-      res.set (r, c, dB (a.get (r, c)));
-  return res;
-}
-
-/*!\brief Computes the argument of each matrix element.
-   \param[in] a matrix
-   \todo add arg in place
-   \todo a is const
-*/
-matrix arg (matrix a) {
-  matrix res (a.getRows (), a.getCols ());
-  for (int r = 0; r < a.getRows (); r++)
-    for (int c = 0; c < a.getCols (); c++)
-      res.set (r, c, arg (a.get (r, c)));
-  return res;
-}
-
-/*!\brief Real part matrix.
-   \param[in] a matrix
-   \todo add real in place
-   \todo a is const
-*/
-matrix real (matrix a) {
-  matrix res (a.getRows (), a.getCols ());
-  for (int r = 0; r < a.getRows (); r++)
-    for (int c = 0; c < a.getCols (); c++)
-      res.set (r, c, real (a.get (r, c)));
-  return res;
-}
-
-/*!\brief Imaginary part matrix.
-   \param[in] a matrix
-   \todo add imag in place
-   \todo a is const
-*/
-matrix imag (matrix a) {
-  matrix res (a.getRows (), a.getCols ());
-  for (int r = 0; r < a.getRows (); r++)
-    for (int c = 0; c < a.getCols (); c++)
-      res.set (r, c, imag (a.get (r, c)));
-  return res;
-}
-
-/*!\brief Create identity matrix with specified number of rows and columns.
-   \param[in] rs row number
-   \param[in] cs column number
-   \todo Avoid res.get* 
-   \todo Use memset
-   \todo rs, cs are const
-*/
-matrix eye (int rs, int cs) {
-  matrix res (rs, cs);
-  for (int r = 0; r < res.getRows (); r++)
-    for (int c = 0; c < res.getCols (); c++)
-      if (r == c) res.set (r, c, 1);
-  return res;
-}
-
-/*!\brief Create a square identity matrix
-   \param[in] s row or column number of square matrix
-   \todo Do not by lazy and implement it
-   \todo s is const
-*/
-matrix eye (int s) {
-  return eye (s, s);
-}
 
 /*!\brief Create a diagonal matrix from a vector
    \param[in] diag vector to write on the diagonal
-   \todo diag is const
+   \todo reimplement when vector is done by eigen
 */
-matrix diagonal (vector diag) {
+matrix diagonal (const ::vector &diag) {
   int size = diag.getSize ();
   matrix res (size);
   for (int i = 0; i < size; i++) res (i, i) = diag (i);
   return res;
 }
 
-// Compute n-th power of the given matrix.
-matrix pow (matrix a, int n) {
-  matrix res;
-  if (n == 0) {
-    res = eye (a.getRows (), a.getCols ());
-  }
-  else {
-    res = a = n < 0 ? inverse (a) : a;
+/*!\brief compute the power (integer) of a matrix
+     \todo audit and port to eigen routine
+  */
+  matrix pow (const matrix &a, const int n) {
+    Eigen::Matrix<nr_complex_t, Eigen::Dynamic, Eigen::Dynamic,Eigen::RowMajor> acu,tmp;
+    if(n == 0)
+      return matrix(a.m.Identity(a.m.rows(),a.m.cols()));
+ 
+    acu = tmp = (n < 0 ? inverse(a).m : a.m);
+    // Compute n-th power of the given matrix.
     for (int i = 1; i < abs (n); i++)
-      res = res * a;
+      acu = acu * tmp;
+    return matrix(acu);
   }
-  return res;
-}
+
+
 
 /*!\brief Computes the complex cofactor of the given determinant 
 
@@ -645,12 +152,12 @@ matrix pow (matrix a, int n) {
    \todo #ifdef 0
    \todo static?
 */
-nr_complex_t cofactor (matrix a, int u, int v) {
-  matrix res (a.getRows () - 1, a.getCols () - 1);
-  int r, c, ra, ca;
-  for (ra = r = 0; r < res.getRows (); r++, ra++) {
+nr_complex_t cofactor (const matrix &a, const unsigned int u, const unsigned int v) {
+  matrix res (a.m.rows () - 1, a.m.cols () - 1);
+  unsigned int r, c, ra, ca;
+  for (ra = r = 0; r < res.m.rows (); r++, ra++) {
     if (ra == u) ra++;
-    for (ca = c = 0; c < res.getCols (); c++, ca++) {
+    for (ca = c = 0; c < res.m.cols (); c++, ca++) {
       if (ca == v) ca++;
       res.set (r, c, a.get (ra, ca));
     }
@@ -674,9 +181,9 @@ nr_complex_t cofactor (matrix a, int u, int v) {
    \todo #ifdef 0
    \todo static ?
 */
-nr_complex_t detLaplace (matrix a) {
-  assert (a.getRows () == a.getCols ());
-  int s = a.getRows ();
+nr_complex_t detLaplace (const matrix &a) {
+  assert (a.m.rows () == a.m.cols ());
+  int s = a.m.rows ();
   nr_complex_t res = 0;
   if (s > 1) {
     /* always use the first row for sub-determinant, but you should
@@ -703,14 +210,13 @@ nr_complex_t detLaplace (matrix a) {
    \param[in] a matrix
    \note assert square matrix
    \todo static ?
-   \todo a const?
    */
-nr_complex_t detGauss (matrix a) {
-  assert (a.getRows () == a.getCols ());
+nr_complex_t detGauss (const matrix &a) {
+  assert (a.m.rows () == a.m.cols ());
   nr_double_t MaxPivot;
   nr_complex_t f, res;
   matrix b;
-  int i, c, r, pivot, n = a.getCols ();
+  int i, c, r, pivot, n = a.m.cols ();
 
   // return special matrix cases
   if (n == 0) return 1;
@@ -764,15 +270,14 @@ nr_complex_t det (matrix a) {
   \param[in] a matrix to invert
   \todo Static?
   \bug recursive! Stack overflow
-  \todo a const?
   \todo #ifdef 0
 */
-matrix inverseLaplace (matrix a) {
-  matrix res (a.getRows (), a.getCols ());
+matrix inverseLaplace (const matrix &a) {
+  matrix res (a.m.rows (), a.m.cols ());
   nr_complex_t d = detLaplace (a);
   assert (abs (d) != 0); // singular matrix
-  for (int r = 0; r < a.getRows (); r++)
-    for (int c = 0; c < a.getCols (); c++)
+  for (unsigned int r = 0; r < a.m.rows (); r++)
+    for (unsigned int c = 0; c < a.m.cols (); c++)
       res.set (r, c, cofactor (a, c, r) / d);
   return res;
 }
@@ -781,16 +286,16 @@ matrix inverseLaplace (matrix a) {
    
    Compute inverse matrix of the given matrix by Gauss-Jordan
    elimination. 
-   \todo a const?
    \todo static?
    \note assert non singulat matix
    \param[in] a matrix to invert
 */
-matrix inverseGaussJordan (matrix a) {
+matrix inverseGaussJordan (const matrix &a) {
   nr_double_t MaxPivot;
   nr_complex_t f;
   matrix b, e;
-  int i, c, r, pivot, n = a.getCols ();
+  unsigned int i,c,r,pivot;
+  const unsigned int n = a.m.cols ();
 
   // create temporary matrix and the result matrix
   b = matrix (a);
@@ -835,7 +340,7 @@ matrix inverseGaussJordan (matrix a) {
    \param[in] a matrix to invert
    \todo a is const
 */
-matrix inverse (matrix a) {
+matrix inverse (const matrix &a) {
 #if 0
   return inverseLaplace (a);
 #else
@@ -878,8 +383,8 @@ matrix inverse (matrix a) {
   \return Renormalized scattering matrix
   \todo s, zref and z0 const
 */
-matrix stos (matrix s, vector zref, vector z0) {
-  int d = s.getRows ();
+matrix stos (matrix s, ::vector zref, ::vector z0) {
+  unsigned int d = s.m.rows ();
   matrix e, r, a;
 
   assert (d == s.getCols () && d == z0.getSize () && d == zref.getSize ());
@@ -900,7 +405,7 @@ matrix stos (matrix s, vector zref, vector z0) {
 */
 matrix stos (matrix s, nr_complex_t zref, nr_complex_t z0) {
   int d = s.getRows ();
-  return stos (s, vector (d, zref), vector (d, z0));
+  return stos (s, ::vector (d, zref), ::vector (d, z0));
 }
 
 /*!\brief S renormalization with all part identic and real
@@ -923,8 +428,8 @@ matrix stos (matrix s, nr_double_t zref, nr_double_t z0) {
    \return Renormalized scattering matrix
    \todo s, zref and z0 const
 */ 
-matrix stos (matrix s, vector zref, nr_complex_t z0) {
-  return stos (s, zref, vector (zref.getSize (), z0));
+matrix stos (matrix s, ::vector zref, nr_complex_t z0) {
+  return stos (s, zref, ::vector (zref.getSize (), z0));
 }
 
 /*!\brief S renormalization (variation)
@@ -935,8 +440,8 @@ matrix stos (matrix s, vector zref, nr_complex_t z0) {
   \todo s, zref and z0 const
   \return Renormalized scattering matrix
 */ 
-matrix stos (matrix s, nr_complex_t zref, vector z0) {
-  return stos (s, vector (z0.getSize (), zref), z0);
+matrix stos (matrix s, nr_complex_t zref, ::vector z0) {
+  return stos (s, ::vector (z0.getSize (), zref), z0);
 }
 
 /*!\brief Scattering parameters to impedance matrix
@@ -961,7 +466,7 @@ matrix stos (matrix s, nr_complex_t zref, vector z0) {
   \todo s, z0 const
   \return Impedance matrix
 */  
-matrix stoz (matrix s, vector z0) {
+matrix stoz (matrix s, ::vector z0) {
   int d = s.getRows ();
   matrix e, zref, gref;
 
@@ -981,7 +486,7 @@ matrix stoz (matrix s, vector z0) {
    \todo s and z0 const?
 */
 matrix stoz (matrix s, nr_complex_t z0) {
-  return stoz (s, vector (s.getRows (), z0));
+  return stoz (s, ::vector (s.getRows (), z0));
 }
 
 /*!\brief Convert impedance matrix scattering parameters.
@@ -1006,7 +511,7 @@ matrix stoz (matrix s, nr_complex_t z0) {
   \bug not correct if zref is complex
   \todo z and z0 const?
 */
-matrix ztos (matrix z, vector z0) {
+matrix ztos (matrix z, ::vector z0) {
   int d = z.getRows ();
   matrix e, zref, gref;
 
@@ -1026,7 +531,7 @@ matrix ztos (matrix z, vector z0) {
    \todo z and z0 const
  */
 matrix ztos (matrix z, nr_complex_t z0) {
-  return ztos (z, vector (z.getRows (), z0));
+  return ztos (z, ::vector (z.getRows (), z0));
 }
 
 /*!\brief impedance matrix to admittance matrix.
@@ -1070,7 +575,7 @@ matrix ztoy (matrix z) {
   \todo s and z0 const
   \return Admittance matrix
 */
-matrix stoy (matrix s, vector z0) {
+matrix stoy (matrix s, ::vector z0) {
   int d = s.getRows ();
   matrix e, zref, gref;
 
@@ -1090,7 +595,7 @@ matrix stoy (matrix s, vector z0) {
    \todo s and z0 const
  */
 matrix stoy (matrix s, nr_complex_t z0) {
-  return stoy (s, vector (s.getRows (), z0));
+  return stoy (s, ::vector (s.getRows (), z0));
 }
 
 /*!\brief Admittance matrix to scattering parameters
@@ -1121,7 +626,7 @@ matrix stoy (matrix s, nr_complex_t z0) {
    \todo why not y and z0 const
    \return Scattering matrix
 */
-matrix ytos (matrix y, vector z0) {
+matrix ytos (matrix y, ::vector z0) {
   int d = y.getRows ();
   matrix e, zref, gref;
 
@@ -1140,7 +645,7 @@ matrix ytos (matrix y, vector z0) {
    \todo y and z0 const
  */
 matrix ytos (matrix y, nr_complex_t z0) {
-  return ytos (y, vector (y.getRows (), z0));
+  return ytos (y, ::vector (y.getRows (), z0));
 }
 /*!\brief Converts chain matrix to scattering parameters.
 
@@ -1523,42 +1028,6 @@ matrix cytocz (matrix cy, matrix z) {
   assert (cy.getRows () == cy.getCols () && z.getRows () == z.getCols () &&
 	  cy.getRows () == z.getRows ());
   return z * cy * adjoint (z);
-}
-
-/*!\brief The function swaps the given rows with each other.
-  \param[in] r1 source row
-  \param[in] r2 destination row
-  \note assert not out of bound r1 and r2
-  \todo r1 and r2 const
-*/
-void matrix::exchangeRows (int r1, int r2) {
-  nr_complex_t * s = new nr_complex_t[cols];
-  int len = sizeof (nr_complex_t) * cols;
-  
-  assert (r1 >= 0 && r2 >= 0 && r1 < rows && r2 < rows);
-
-  memcpy (s, &data[r1 * cols], len);
-  memcpy (&data[r1 * cols], &data[r2 * cols], len);
-  memcpy (&data[r2 * cols], s, len);
-  delete[] s;
-}
-
-/*!\brief The function swaps the given column with each other.
-  \param[in] c1 source column
-  \param[in] c2 destination column
-  \note assert not out of bound r1 and r2
-  \todo c1 and c2 const
-*/
-void matrix::exchangeCols (int c1, int c2) {
-  nr_complex_t s;
-
-  assert (c1 >= 0 && c2 >= 0 && c1 < cols && c2 < cols);
-
-  for (int r = 0; r < rows * cols; r += cols) {
-    s = data[r + c1];
-    data[r + c1] = data[r + c2];
-    data[r + c2] = s;
-  }
 }
 
 /*!\brief Generic conversion matrix
