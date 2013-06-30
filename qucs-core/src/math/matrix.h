@@ -108,11 +108,11 @@ class matrix
   /*! \brief get number of columns
       \todo replace by cols() 
   */
-  const unsigned int getCols (void) const { return this->m.cols(); }
+  unsigned int getCols (void) const { return this->m.cols(); }
   /*! \brief get number of rows
       \todo replace by rows() 
   */
-  const unsigned int getRows (void) const { return this->m.rows(); }
+  unsigned int getRows (void) const { return this->m.rows(); }
 
   /*! get data aka linear array of coefficient */
   const nr_complex_t * getData (void) const { return this->m.data(); }

@@ -99,7 +99,7 @@
 
 #ifdef DEBUG
 /*!\brief Debug function: Prints the matrix object */
-void matrix::print (void) {
+void matrix::print (void) const {
   for (int r = 0; r < this->m.rows(); r++) {
     for (int c = 0; c < this->m.cols(); c++) {
       fprintf (stderr, "%+.2e,%+.2e ", (double) real (get (r, c)),
@@ -387,7 +387,7 @@ matrix stos (matrix s, ::vector zref, ::vector z0) {
   unsigned int d = s.m.rows ();
   matrix e, r, a;
 
-  assert (d == s.getCols () && d == z0.getSize () && d == zref.getSize ());
+  assert (d == s.m.cols () && d == (unsigned) z0.getSize () && d == (unsigned) zref.getSize ());
 
   e = eye (d);
   r = diagonal ((z0 - zref) / (z0 + zref));
@@ -467,10 +467,10 @@ matrix stos (matrix s, nr_complex_t zref, ::vector z0) {
   \return Impedance matrix
 */  
 matrix stoz (matrix s, ::vector z0) {
-  int d = s.getRows ();
+  unsigned int d = s.m.rows();
   matrix e, zref, gref;
 
-  assert (d == s.getCols () && d == z0.getSize ());
+  assert (d == s.m.cols () && d == (unsigned) z0.getSize ());
 
   e = eye (d);
   zref = diagonal (z0);
@@ -512,10 +512,10 @@ matrix stoz (matrix s, nr_complex_t z0) {
   \todo z and z0 const?
 */
 matrix ztos (matrix z, ::vector z0) {
-  int d = z.getRows ();
+  unsigned int d = z.m.rows();
   matrix e, zref, gref;
 
-  assert (d == z.getCols () && d == z0.getSize ());
+  assert (d == z.getCols () && d == (unsigned) z0.getSize ());
 
   e = eye (d);
   zref = diagonal (z0);
@@ -576,10 +576,10 @@ matrix ztoy (matrix z) {
   \return Admittance matrix
 */
 matrix stoy (matrix s, ::vector z0) {
-  int d = s.getRows ();
+  unsigned int d = s.m.rows ();
   matrix e, zref, gref;
 
-  assert (d == s.getCols () && d == z0.getSize ());
+  assert (d == s.m.cols () && d == (unsigned) z0.getSize ());
 
   e = eye (d);
   zref = diagonal (z0);
@@ -627,10 +627,10 @@ matrix stoy (matrix s, nr_complex_t z0) {
    \return Scattering matrix
 */
 matrix ytos (matrix y, ::vector z0) {
-  int d = y.getRows ();
+  unsigned int d = y.m.rows ();
   matrix e, zref, gref;
 
-  assert (d == y.getCols () && d == z0.getSize ());
+  assert (d == y.m.cols () && d == (unsigned) z0.getSize ());
   
   e = eye (d);
   zref = diagonal (z0);
