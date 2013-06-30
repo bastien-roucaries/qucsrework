@@ -19,12 +19,9 @@ dnl Complex
 AC_DEFUN([AC_CXX_HAVE_COMPLEX],
 [AC_CACHE_CHECK(whether the compiler has complex<T>,
 ac_cv_cxx_have_complex,
-[AC_REQUIRE([AC_CXX_NAMESPACES])	
- AC_LANG_PUSH(C++)
+[AC_LANG_PUSH(C++)
  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <complex>
-#ifdef HAVE_NAMESPACES
-using namespace std;
-#endif]],
+using namespace std;]],
 [[complex<float> a; complex<double> b; 
 abs(b); real(b); imag(b); arg(b); conj(b); return 0;]])],
  ac_cv_cxx_have_complex=yes, ac_cv_cxx_have_complex=no)
@@ -57,8 +54,7 @@ fi
 
 dnl equivalent of AC_CHECK_FUNC
 AC_DEFUN([AC_CHECK_CXX_COMPLEX_FUNC],
-[AC_REQUIRE([AC_CXX_NAMESPACES])
- AC_REQUIRE([AC_CXX_HAVE_COMPLEX])
+[AC_REQUIRE([AC_CXX_HAVE_COMPLEX])
  AC_REQUIRE([AC_CXX_HAVE_TR1_COMPLEX])
  AS_VAR_PUSHDEF([ac_var], [ac_cv_cpp_complex_func_$1])dnl
  AC_CACHE_CHECK([for complex $1], [ac_var],
@@ -70,9 +66,7 @@ AC_DEFUN([AC_CHECK_CXX_COMPLEX_FUNC],
 		    using namespace std::tr1;
 		    #else
 		    #include <complex>
-		    #ifdef HAVE_NAMESPACES
 		    using namespace std;
-		    #endif
 		    #endif
 		    #ifdef log2
 		    #undef log2
@@ -102,8 +96,7 @@ done
 
 dnl equivalent of AC_CHECK_FUNC
 AC_DEFUN([AC_CHECK_CXX_COMPLEX_POW],
-[AC_REQUIRE([AC_CXX_NAMESPACES])
- AC_REQUIRE([AC_CXX_HAVE_COMPLEX])
+[AC_REQUIRE([AC_CXX_HAVE_COMPLEX])
  AC_REQUIRE([AC_CXX_HAVE_TR1_COMPLEX])
  AS_VAR_PUSHDEF([ac_var], [ac_cv_cpp_complex_func_pow])dnl
  AC_CACHE_CHECK([for complex pow], [ac_var],
@@ -115,9 +108,7 @@ AC_DEFUN([AC_CHECK_CXX_COMPLEX_POW],
 			  using namespace std::tr1;
 		        #else
 		        # include <complex>
-		        # ifdef HAVE_NAMESPACES
 		           using namespace std;
-		        #endif
 		        #endif
 		        ]],
 	       	         [[complex<double> x,y;  
@@ -140,8 +131,7 @@ AS_VAR_POPDEF([ac_var])dnl
 
 dnl equivalent of AC_CHECK_FUNC
 AC_DEFUN([AC_CHECK_CXX_COMPLEX_ATAN2],
-[AC_REQUIRE([AC_CXX_NAMESPACES])
- AC_REQUIRE([AC_CXX_HAVE_COMPLEX])
+[AC_REQUIRE([AC_CXX_HAVE_COMPLEX])
  AC_REQUIRE([AC_CXX_HAVE_TR1_COMPLEX])
  AS_VAR_PUSHDEF([ac_var], [ac_cv_cpp_complex_func_atan2])dnl
  AC_CACHE_CHECK([for complex atan2], [ac_var],
@@ -153,9 +143,7 @@ AC_DEFUN([AC_CHECK_CXX_COMPLEX_ATAN2],
 			  using namespace std::tr1;
 		        #else
 		        # include <complex>
-		        # ifdef HAVE_NAMESPACES
 		           using namespace std;
-		        #endif
 		        #endif
 			 ]],
 	       	         [[complex<double> x(1,1),y(1,1);  
@@ -173,8 +161,7 @@ AS_VAR_POPDEF([ac_var])dnl
 
 dnl equivalent of AC_CHECK_FUNC
 AC_DEFUN([AC_CHECK_CXX_COMPLEX_FMOD],
-[AC_REQUIRE([AC_CXX_NAMESPACES])
- AC_REQUIRE([AC_CXX_HAVE_COMPLEX])
+[AC_REQUIRE([AC_CXX_HAVE_COMPLEX])
  AC_REQUIRE([AC_CXX_HAVE_TR1_COMPLEX])
  AS_VAR_PUSHDEF([ac_var], [ac_cv_cpp_complex_func_fmod])dnl
  AC_CACHE_CHECK([for complex fmod], [ac_var],
@@ -186,9 +173,7 @@ AC_DEFUN([AC_CHECK_CXX_COMPLEX_FMOD],
 			  using namespace std::tr1;
 		        #else
 		        # include <complex>
-		        # ifdef HAVE_NAMESPACES
 		           using namespace std;
-		        #endif
 		        #endif
 		        ]],
 	       	         [[complex<double> x,y;  
@@ -207,8 +192,7 @@ AS_VAR_POPDEF([ac_var])dnl
 
 dnl equivalent of AC_CHECK_FUNC
 AC_DEFUN([AC_CHECK_CXX_COMPLEX_POLAR],
-[AC_REQUIRE([AC_CXX_NAMESPACES])
- AC_REQUIRE([AC_CXX_HAVE_COMPLEX])
+[AC_REQUIRE([AC_CXX_HAVE_COMPLEX])
  AC_REQUIRE([AC_CXX_HAVE_TR1_COMPLEX])
  AS_VAR_PUSHDEF([ac_var], [ac_cv_cpp_complex_func_polar])dnl
  AC_CACHE_CHECK([for complex polar (double, double)], [ac_var],
@@ -220,9 +204,7 @@ AC_DEFUN([AC_CHECK_CXX_COMPLEX_POLAR],
 			  using namespace std::tr1;
 		        #else
 		        # include <complex>
-		        # ifdef HAVE_NAMESPACES
 		           using namespace std;
-		        #endif
 		        #endif
 		        ]],
 	       	         [[
@@ -241,8 +223,7 @@ AS_VAR_POPDEF([ac_var])dnl
 
 dnl equivalent of AC_CHECK_FUNC
 AC_DEFUN([AC_CHECK_CXX_COMPLEX_POLAR_COMPLEX],
-[AC_REQUIRE([AC_CXX_NAMESPACES])
- AC_REQUIRE([AC_CXX_HAVE_COMPLEX])
+[AC_REQUIRE([AC_CXX_HAVE_COMPLEX])
  AC_REQUIRE([AC_CXX_HAVE_TR1_COMPLEX])
  AS_VAR_PUSHDEF([ac_var], [ac_cv_cpp_complex_func_polar_complex])dnl
  AC_CACHE_CHECK([for complex polar (complex, complex)], [ac_var],
@@ -254,9 +235,7 @@ AC_DEFUN([AC_CHECK_CXX_COMPLEX_POLAR_COMPLEX],
 			  using namespace std::tr1;
 		        #else
 		        # include <complex>
-		        # ifdef HAVE_NAMESPACES
 		           using namespace std;
-		        #endif
 		        #endif
 		        ]],
 	       	         [[

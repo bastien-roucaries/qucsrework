@@ -489,6 +489,7 @@ AC_CONFIG_HEADER([config.h])
 
 # specific configuration.
 AC_CONFIG_AUX_DIR([auxconf])
+AC_CONFIG_MACRO_DIR([m4])
 AM_MAINTAINER_MODE
 
 dnl disabling cache loading -->> make easier cross-platform debug

@@ -39,18 +39,7 @@ else
   echo "No local adms source folder found (you may need to use the --diable-adms option to build with installed version)"
 fi
 
-echo -n "Creating aclocal.m4... "
-${ACLOCAL:-aclocal} -I m4
-echo "done."
-echo -n "Creating config.h.in... "
-autoheader
-echo "done."
-echo -n "Creating Makefile.in(s)... "
-${AUTOMAKE:-automake} -a -f -c
-echo "done."
-echo -n "Creating configure... "
-autoconf
-echo "done."
+autoreconf -f -i
 
 #
 # run configure, maybe with parameters recorded in config.status
@@ -70,3 +59,4 @@ else
 fi
 echo Running `for i; do echo "'$i'"$@; done` ...
 "$@" --with-mkadms=internal
+x

@@ -38,9 +38,9 @@ endif
 ## to be build first, followed by src, then doc
 SUBDIRS += src doc .
 
-ACLOCAL_AMFLAGS = -I m4
+ACLOCAL_AMFLAGS = -I m4 --install
 
-EXTRA_DIST = BUGS autogen.sh depcomp RELEASE
+EXTRA_DIST = BUGS autogen.sh RELEASE
 
 CLEANFILES = *~ *.orig *.rej
 MAINTAINERCLEANFILES = aclocal.m4 config.h.in configure Makefile.in \
